@@ -1,0 +1,193 @@
+{
+  // R === Reason
+  // "off" or 0 - turn the rule off
+  // "warn" or 1 - turn the rule on as a warning (doesn't affect exit code)
+  // "error" or 2 - turn the rule on as an error (exit code is 1 when triggered)
+  // @react-native-community: rules https://github.com/facebook/react-native/blob/ca090ac97723a3882b525dc48882168ba56d7aa2/packages/eslint-config-react-native-community/index.js
+  // TODO: migration to eslint 8 isn't possible due to issue with flowtype plugin included in @react-native-community
+  "root": true,
+  "extends": "@react-native-community",
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "folders",
+    "filenames",
+    "import",
+    "eslint-plugin-import",
+    "@typescript-eslint",
+    "prettier"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": ["*.ts?(x)", "*.d.ts", "*.android.ts?(x)", "*.ios.ts?(x)"]
+      }
+    }
+  },
+  "rules": {
+    "@typescript-eslint/explicit-member-accessibility": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts?(x)"],
+      "rules": {
+        // --- 🔸 FOLDERS ---
+        // R: validadte folders names to follow (kebab-case)
+        "folders/match-regex": [2, "^[a-z0-9]+(?:-[a-z0-9]+)*$", "/src/"],
+        "filenames/match-regex": [2, "^[a-z0-9]+(?:-[a-z0-9]+)*?[a-z.]*$"],
+        // R: validate react hooks dependencies with only warnings
+        "react-hooks/exhaustive-deps": "warn",
+        // --- 🔸 PRETTIER ---
+        // R: prettier issues should lead to error
+        "prettier/prettier": [
+          2,
+          {
+            "endOfLine": "auto"
+          }
+        ],
+        // --- 🔸 JAVASCRIPT ---
+        // R: rule works incorrect
+        "no-undef": 0,
+        // R: var shadow is dengerous
+        "@typescript-eslint/no-shadow": 2,
+        // R: switch/case is too imperative
+        "no-restricted-syntax": [
+          2,
+          {
+            "selector": "SwitchStatement",
+            "message": "switch/case statement is not allowed."
+          }
+        ],
+        // R: Code is more robust
+        "prefer-const": [
+          2,
+          {
+            "destructuring": "all",
+            "ignoreReadBeforeAssign": true
+          }
+        ],
+        "no-param-reassign": [
+          "error",
+          {
+            "props": false
+          }
+        ],
+        //  R: code is more readable
+        "no-useless-rename": 2,
+        "no-nested-ternary": 2,
+        "prefer-destructuring": [
+          2,
+          {
+            "VariableDeclarator": {
+              "array": false,
+              "object": true
+            },
+            "AssignmentExpression": {
+              "array": false,
+              "object": false
+            }
+          },
+          {
+            "enforceForRenamedProperties": false
+          }
+        ],
+        "arrow-body-style": 2,
+        // R: limit usage of unused expressions
+        "no-unused-expressions": [
+          "error",
+          {
+            "allowTernary": true,
+            "allowShortCircuit": true
+          }
+        ],
+        // R: console is dengerous (warn!)
+        "no-console": 1,
+
+        // --- 🔸 IMPORT ---
+        // R: code is more robust
+        "import/no-unused-modules": ["error", { "unusedExports": true }],
+        "import/no-extraneous-dependencies": 2,
+        "import/imports-first": ["error", "absolute-first"],
+        "import/no-duplicates": 2,
+        // R: code is more readable
+        "import/newline-after-import": "error",
+        "import/no-named-as-default-member": 2,
+        "import/no-useless-path-segments": 2,
+
+        // --- 🔸 TYPESCRIPT ---
+        // R: code is more robust
+        "no-shadow": 0,
+        "@typescript-eslint/no-shadow": 1,
+        "@typescript-eslint/ban-ts-comment": [2, { "ts-ignore": "allow-with-description" }],
+        "@typescript-eslint/no-explicit-any": 1,
+        // R: helps keep the codebase consistent, and reduces overhead when thinking about how to name a variable
+        "@typescript-eslint/naming-convention": [
+          "warn",
+          {
+            "selector": "interface",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "enum",
+            "format": ["PascalCase", "UPPER_CASE"]
+          },
+          {
+            "selector": "typeAlias",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+          },
+          {
+            "selector": "parameter",
+            "format": ["camelCase", "PascalCase"]
+          },
+          // R: to allow destructured properties to retain their original name
+          {
+            "selector": "variable",
+            "modifiers": ["destructured"],
+            "format": null
+          }
+        ],
+        // R: makes code in classes more consistent: public methods and properties don't require `public` accessibility modifier
+        "@typescript-eslint/explicit-member-accessibility": [
+          "warn",
+          { "accessibility": "no-public" }
+        ],
+
+        // --- 🔸 REACT / REACT NATIVE ---
+        // R: code is more robust
+        "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }],
+        "react-native/no-unused-styles": 2,
+        "react-native/split-platform-components": 2
+      },
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      }
+    },
+    {
+      "files": ["**/*.test.ts?(x)"],
+      "rules": {
+        // --- 🔸 IMPORTS ---
+        // R: allow mock modules
+        "import/imports-first": [0, "absolute-first"],
+
+        // --- 🔸 JEST ---
+        // R: code is more robust
+        "jest/no-identical-title": 2,
+        // R: code is more robust
+        "jest/valid-expect": 2,
+        // R: disable any check in tests
+        "@typescript-eslint/no-explicit-any": 0
+      }
+    },
+    {
+      "files": ["*.d.ts"],
+      "rules": {
+        // --- 🔸 TYPE DEFINITIONS ---
+        "no-unused-vars": 0,
+        "@typescript-eslint/no-unused-vars": 0
+      }
+    }
+  ]
+}
